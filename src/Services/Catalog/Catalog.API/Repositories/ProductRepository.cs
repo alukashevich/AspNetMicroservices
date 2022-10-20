@@ -6,56 +6,56 @@ namespace Catalog.API.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly ICatalogContext _context;
+        private readonly ICatalogContext context;
 
         public ProductRepository(ICatalogContext context)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IEnumerable<Product>> GetProducts()
+        public async Task<IEnumerable<Product>> GetProductsAsync()
         {
-            return await _context
+            return await context
                             .Products
                             .Find(p => true)
                             .ToListAsync().ConfigureAwait(false);
         }
-        public Task<Product> GetProduct(string id)
+        public Task<Product> GetProductAsync(string id)
         {
-            return _context
+            return context
                 .Products
                 .Find(p => p.Id == id)
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Product>> GetProductByName(string name)
+        public async Task<IEnumerable<Product>> GetProductByNameAsync(string name)
         {
             FilterDefinition<Product> filter = Builders<Product>.Filter.Eq(p => p.Name, name);
 
-            return await _context
+            return await context
                             .Products
                             .Find(filter)
                             .ToListAsync().ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<Product>> GetProductByCategory(string categoryName)
+        public async Task<IEnumerable<Product>> GetProductByCategoryAsync(string categoryName)
         {
             FilterDefinition<Product> filter = Builders<Product>.Filter.Eq(p => p.Category, categoryName);
 
-            return await _context
+            return await context
                             .Products
                             .Find(filter)
                             .ToListAsync().ConfigureAwait(false);
         }
 
-        public Task CreateProduct(Product product)
+        public Task CreateProductAsync(Product product)
         {
-            return _context.Products.InsertOneAsync(product);
+            return context.Products.InsertOneAsync(product);
         }
 
-        public async Task<bool> UpdateProduct(Product product)
+        public async Task<bool> UpdateProductAsync(Product product)
         {
-            var updateResult = await _context
+            var updateResult = await context
                                         .Products
                                         .ReplaceOneAsync(filter: g => g.Id == product.Id, replacement: product)
                                         .ConfigureAwait(false);
@@ -64,11 +64,11 @@ namespace Catalog.API.Repositories
                     && updateResult.ModifiedCount > 0;
         }
 
-        public async Task<bool> DeleteProduct(string id)
+        public async Task<bool> DeleteProductAsync(string id)
         {
             FilterDefinition<Product> filter = Builders<Product>.Filter.Eq(p => p.Id, id);
 
-            DeleteResult deleteResult = await _context
+            DeleteResult deleteResult = await context
                                                 .Products
                                                 .DeleteOneAsync(filter).ConfigureAwait(false);
 
