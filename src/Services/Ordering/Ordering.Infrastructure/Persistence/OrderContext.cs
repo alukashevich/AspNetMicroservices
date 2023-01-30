@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Ordering.Domain.Common;
 using Ordering.Domain.Entities;
+using Ordering.Infrastructure.Persistence.Ordering.Infrastructure.Persistence;
 
 namespace Ordering.Infrastructure.Persistence
 {
