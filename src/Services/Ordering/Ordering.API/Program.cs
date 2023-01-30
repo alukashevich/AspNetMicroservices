@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
+using Ordering.API.Extensions;
 using Ordering.Application;
 using Ordering.Infrastructure;
+using Ordering.Infrastructure.Persistence;
 using Ordering.Infrastructure.Persistence.Ordering.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -26,5 +27,13 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MigrateDatabase<OrderContext>((context, services) => { 
+    var logger = services.GetService<ILogger<OrderContextSeed>>();
+    
+    OrderContextSeed
+        .SeedAsync(context, logger)
+        .Wait();
+});
 
 app.Run();
