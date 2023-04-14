@@ -65,13 +65,17 @@ namespace Basket.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Checkout([FromBody] BasketCheckout basketCheckout)
         {
+            if (basketCheckout is null)
+            {
+                throw new ArgumentNullException(nameof(basketCheckout));
+            }
             // get existing basket with total price            
             // Set TotalPrice on basketCheckout eventMessage
             // send checkout event to rabbitmq
             // remove the basket
 
             // get existing basket with total price
-            var basket = await basketRepository.GetBasketAsync(basketCheckout.UserName);
+            ShoppingCart? basket = await basketRepository.GetBasketAsync(basketCheckout.UserName);
             if (basket == null)
             {
                 return BadRequest();
